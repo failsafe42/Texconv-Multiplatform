@@ -54,7 +54,7 @@
 #ifdef _WIN32
 #include <dxgiformat.h>
 #include <wincodec.h>
-#else //_WIN32
+#else //!_WIN32
 #include <directx/dxgiformat.h>
 #endif //_WIN32
 

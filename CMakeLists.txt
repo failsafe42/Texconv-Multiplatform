@@ -204,6 +204,32 @@ if (BUILD_TOOLS AND TEXCONV_USE_TEXASSEMBLE AND TEXCONV_BUILD_AS_EXE)
   list(APPEND TOOL_EXES texassemble)
 endif()
 
+if (BUILD_TOOLS AND TEXCONV_USE_TEXDIAG AND TEXCONV_BUILD_AS_EXE)
+  set(TEXDIAG_FILES
+    ${CMAKE_BINARY_DIR}/TexconvDLL/config.h
+    ${CMAKE_SOURCE_DIR}/TexconvDLL/config.h.in
+    TexconvDLL/tool_util.h
+    TexconvDLL/texdiag.cpp)
+  if (WIN32)
+    if (TEXCONV_ICON_FOR_EXE)
+      set(TEXDIAG_FILES ${TEXDIAG_FILES}
+        TexconvDLL/texconv.rc)
+    endif()
+    set(TEXDIAG_FILES ${TEXDIAG_FILES}
+      DirectXTex/Common/settings.manifest)
+  endif()
+    add_executable(texdiag ${TEXDIAG_FILES})
+  target_compile_features(texdiag PRIVATE cxx_std_17)
+  if (WIN32)
+    target_link_libraries(texdiag PRIVATE DirectXTex ole32.lib version.lib)
+  else()
+    # unix need a library for safe functions
+    target_link_libraries(texdiag PRIVATE DirectXTex safestring_static)
+  endif()
+  source_group(texdiag FILES ${TEXDIAG_FILES})
+  list(APPEND TOOL_EXES texdiag)
+endif()
+
 if(BUILD_TOOLS)
   set(TEXCONV_FILES
     ${CMAKE_BINARY_DIR}/TexconvDLL/config.h
@@ -218,6 +244,12 @@ if(BUILD_TOOLS)
         set(TEXCONV_FILES ${TEXCONV_FILES}
           DirectXTex/Texassemble/AnimatedGif.cpp)
       endif()
+    endif()
+  endif()
+  if (TEXCONV_USE_TEXDIAG)
+    if (NOT TEXCONV_BUILD_AS_EXE)
+      set(TEXCONV_FILES ${TEXCONV_FILES}
+        TexconvDLL/texdiag.cpp)
     endif()
   endif()
   if (TEXCONV_USE_WIC AND WIN32)

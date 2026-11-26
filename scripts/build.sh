@@ -5,10 +5,11 @@
 function usage() {
 cat <<EOF
 Usage: build.cmd [options]
-  --build-as-exe          build texconv and texassemble as executables
+  --build-as-exe          build texconv, texassemble, and texdiag as executables
   --use-optional-formats  support JPEG, PNG, and EXR formats
   --use-dynamic-link      use system installed 3rd party libraries
   --no-texassemble        do not build texassemble
+  --no-texdiag            do not build texdiag
   --debug                 enable debug build
   --test                  build and run tests
   --generator <name>      specify a build system e.g. Ninja
@@ -18,11 +19,11 @@ Usage: build.cmd [options]
     build.cmd
       -> generates libtexconv in the project root (Texconv-Custom-DLL/)
     build.cmd --build-as-exe
-      -> generates texconv and texassemble in the project root.
+      -> generates texconv, texassemble, and texdiag in the project root.
     build.cmd --use-optional-formats
       -> generates libtexconv with JPEG, PNG, and EXR support.
     build.cmd --build-as-exe --generator "Unix Makefiles"
-      -> generates texconv and texassemble with make.
+      -> generates texconv, texassemble, and texdiag with make.
 EOF
 }
 
@@ -36,6 +37,7 @@ use_dynamic_link=false
 use_optional_formats=false
 build_as_exe=false
 use_texassemble=true
+use_texdiag=true
 build_dir=build
 test=false
 generator="$(
@@ -83,6 +85,9 @@ for arg in "$@"; do
     --no-texassemble)
       use_texassemble=false
       ;;
+    --no-texdiag)
+      use_texdiag=false
+      ;;
     --generator)
       next_arg_is_generator=true
       ;;
@@ -122,6 +127,9 @@ fi
 if $use_texassemble; then
   cmake_options+=(-DTEXCONV_USE_TEXASSEMBLE=ON)
 fi
+if $use_texdiag; then
+  cmake_options+=(-DTEXCONV_USE_TEXDIAG=ON)
+fi
 
 echo "cmake -G \"${generator}\" ${cmake_options[@]} ../"
 cmake_options=(
@@ -154,6 +162,9 @@ strip_texconv() {
     if $use_texassemble; then
       strip_symbols "${bin_dir}/texassemble"
     fi
+    if $use_texdiag; then
+      strip_symbols "${bin_dir}/texdiag"
+    fi
   else
     strip_symbols "${lib_dir}/libtexconv.*"
   fi
@@ -183,6 +194,9 @@ pushd $(dirname "$0")/../ > /dev/null
       if $use_texassemble; then
         lipo -create -output texassemble "${build_dir}_x86_64/${bin_dir}/texassemble" "${build_dir}_arm64/${bin_dir}/texassemble"
       fi
+      if $use_texdiag; then
+        lipo -create -output texdiag "${build_dir}_x86_64/${bin_dir}/texdiag" "${build_dir}_arm64/${bin_dir}/texdiag"
+      fi
     else
       lipo -create -output libtexconv.dylib "${build_dir}_x86_64/${lib_dir}/libtexconv.dylib" "${build_dir}_arm64/${lib_dir}/libtexconv.dylib"
     fi
@@ -202,6 +216,9 @@ pushd $(dirname "$0")/../ > /dev/null
       cp "${bin_dir}/texconv" ../
       if $use_texassemble; then
         cp "${bin_dir}/texassemble" ../
+      fi
+      if $use_texdiag; then
+        cp "${bin_dir}/texdiag" ../
       fi
     else
       cp "${lib_dir}/libtexconv."* ../
