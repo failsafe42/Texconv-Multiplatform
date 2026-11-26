@@ -7,6 +7,9 @@ on:
       - "v*"
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 env:
   ZIP_NAME: TexconvCustomDLL
 
@@ -66,6 +69,7 @@ jobs:
           cp texconv.dll release/
           cp texconv.exe release/
           cp texassemble.exe release/
+          cp texdiag.exe release/
           cp changelog.txt release/
           cp LICENSE release/
           cp THIRD_PARTY_LICENSES.txt release/
@@ -112,6 +116,7 @@ jobs:
           cp libtexconv.* release/${{ env.ZIP_NAME }}
           cp texconv release/${{ env.ZIP_NAME }}
           cp texassemble release/${{ env.ZIP_NAME }}
+          cp texdiag release/${{ env.ZIP_NAME }}
           cp changelog.txt release/${{ env.ZIP_NAME }}
           cp LICENSE release/${{ env.ZIP_NAME }}
           cp THIRD_PARTY_LICENSES.txt release/${{ env.ZIP_NAME }}
@@ -142,6 +147,7 @@ jobs:
           docker cp texconv:/Texconv-Custom-DLL/libtexconv.so ./release/${{ env.ZIP_NAME }}
           docker cp texconv:/Texconv-Custom-DLL/texconv ./release/${{ env.ZIP_NAME }}
           docker cp texconv:/Texconv-Custom-DLL/texassemble ./release/${{ env.ZIP_NAME }}
+          docker cp texconv:/Texconv-Custom-DLL/texdiag ./release/${{ env.ZIP_NAME }}
           cp changelog.txt release/${{ env.ZIP_NAME }}
           cp LICENSE release/${{ env.ZIP_NAME }}
           cp THIRD_PARTY_LICENSES.txt release/${{ env.ZIP_NAME }}

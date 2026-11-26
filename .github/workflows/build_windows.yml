@@ -4,6 +4,9 @@ name: build_windows
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 env:
   ZIP_NAME: TexconvCustomDLL
 
@@ -32,6 +35,7 @@ jobs:
           cp texconv.dll release/
           cp texconv.exe release/
           cp texassemble.exe release/
+          cp texdiag.exe release/
           cp changelog.txt release/
           cp LICENSE release/
           cp THIRD_PARTY_LICENSES.txt release/

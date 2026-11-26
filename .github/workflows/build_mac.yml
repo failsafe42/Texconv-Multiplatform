@@ -4,6 +4,9 @@ name: build_mac
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 env:
   ZIP_NAME: TexconvCustomDLL
 
@@ -37,6 +40,7 @@ jobs:
           cp libtexconv.dylib release/${{ env.ZIP_NAME }}
           cp texconv release/${{ env.ZIP_NAME }}
           cp texassemble release/${{ env.ZIP_NAME }}
+          cp texdiag release/${{ env.ZIP_NAME }}
           cp changelog.txt release/${{ env.ZIP_NAME }}
           cp LICENSE release/${{ env.ZIP_NAME }}
           cp THIRD_PARTY_LICENSES.txt release/${{ env.ZIP_NAME }}
