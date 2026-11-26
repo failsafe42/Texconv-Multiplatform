@@ -3076,7 +3076,7 @@ namespace
 
 // int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
 #ifdef _WIN32
-static int texdiag_base(int argc, wchar_t* argv[], bool verbose, bool init_com, wchar_t* err_buf, int err_buf_size);
+static int texdiag_base(int argc, wchar_t* argv[], TexMetadata& info, bool verbose, bool init_com, wchar_t* err_buf, int err_buf_size);
 extern "C" __declspec(dllexport) int __cdecl texdiag(int argc, wchar_t* argv[], TexMetadata& info, bool verbose = true, bool init_com = false, wchar_t* err_buf = nullptr, int err_buf_size = 0)
 {
     HRESULT hr = S_OK;
@@ -3090,13 +3090,13 @@ extern "C" __declspec(dllexport) int __cdecl texdiag(int argc, wchar_t* argv[], 
             return 1;
         }
     }
-    int ret = texdiag_base(argc, argv, verbose, init_com, err_buf, err_buf_size);
+    int ret = texdiag_base(argc, argv, info, verbose, init_com, err_buf, err_buf_size);
     if (init_com && hr != RPC_E_CHANGED_MODE)
         CoUninitialize();
     return ret;
 }
 
-static int texdiag_base(int argc, wchar_t* argv[], bool verbose, bool init_com, wchar_t* err_buf, int err_buf_size)
+static int texdiag_base(int argc, wchar_t* argv[], TexMetadata& info, bool verbose, bool init_com, wchar_t* err_buf, int err_buf_size)
 {
 #else
 extern "C" __attribute__((visibility("default"))) int texdiag(int argc, wchar_t* argv[], TexMetadata& info, bool verbose = true, bool init_com = false, wchar_t* err_buf = nullptr, int err_buf_size = 0)
