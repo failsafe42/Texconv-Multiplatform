@@ -30,6 +30,7 @@ EOF
 os="$(uname -s)"
 cmake_options=(
   -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+  "-DCMAKE_CXX_FLAGS=${CXXFLAGS} -DPAL_STDCPP_COMPAT"
 )
 config_type=Release
 build_universal=false
