@@ -71,6 +71,28 @@ The return value is the execution status.
 0 means no errors.  
 And 1 means failed to convert.  
 
+#### texdiag
+
+You can use [texdiag](https://github.com/microsoft/DirectXTex/wiki/Texdiag) if you built the dll with `TEXCONV_USE_TEXDIAG` option.
+
+```c++
+int texdiag(int argc, wchar_t* argv[], TexMetadata& info,
+            bool verbose = true, bool init_com = false,
+            wchar_t* err_buf = nullptr, int err_buf_size = 0)
+```
+
+-   `argc`: The number of arguments for texassemble.
+-   `argv`: An array of arguments for texassemble.
+-   `info`: TexMetadata to return info about the image.
+-   `verbose`: Shows info
+-   `init_com`: Calls init_com() and uninit_com() internally.
+-   `err_buf`: A buffer to store error messages.
+-   `err_buf_size`: The size of the buffer.
+
+The return value is the execution status.  
+0 means no errors.  
+And 1 means failed.  
+
 #### init_com
 
 ```c++

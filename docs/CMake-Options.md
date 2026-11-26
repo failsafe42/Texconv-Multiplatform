@@ -12,6 +12,7 @@ You can enable them with `-D` option (e.g. `-D TEXCONV_USE_TEXASSEMBLE=ON`).
 
 -   `TEXCONV_NO_GPU_CODEC`: Disable GPU codec for BC6 and BC7 (Only available for Windows)
 -   `TEXCONV_USE_TEXASSEMBLE`: Enable to use texassemble as a DLL function
+-   `TEXCONV_USE_TEXDIAG`: Enable to use texdiag as a DLL function
 -   `TEXCONV_USE_STATIC_LINK`: Use static linked libjpeg, libpng, and OpenEXR.
 -   `ENABLE_LIBJPEG_SUPPORT`: Add JPEG support for Linux/macOS
 -   `ENABLE_LIBPNG_SUPPORT`: Add PNG support for Linux/macOS

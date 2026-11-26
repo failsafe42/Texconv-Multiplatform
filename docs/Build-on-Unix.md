@@ -50,10 +50,11 @@ There are more options for `build.cmd`.
 ```console
 > ./build.cmd --help
 Usage: build.cmd [options]
-  --build-as-exe          build texconv and texassemble as executables
+  --build-as-exe          build texconv, texassemble, and texdiag as executables
   --use-optional-formats  support JPEG, PNG, and EXR formats
   --use-dynamic-link      use system installed 3rd party libraries
   --no-texassemble        do not build texassemble
+  --no-texdiag            do not build texdiag
   --debug                 enable debug build
   --test                  build and run tests
   --generator <name>      specify a build system e.g. Ninja
@@ -63,9 +64,9 @@ Usage: build.cmd [options]
     build.cmd
       -> generates libtexconv in the project root (Texconv-Custom-DLL/)
     build.cmd --build-as-exe
-      -> generates texconv and texassemble in the project root.
+      -> generates texconv, texassemble, and texdiag in the project root.
     build.cmd --use-optional-formats
       -> generates libtexconv with JPEG, PNG, and EXR support.
     build.cmd --build-as-exe --generator "Unix Makefiles"
-      -> generates texconv and texassemble with make.
+      -> generates texconv, texassemble, and texdiag with make.
 ```

@@ -1,6 +1,6 @@
 # Texconv-Custom-DLL v0.6.0
 
-Cross-platform implementation for [Texconv](https://github.com/microsoft/DirectXTex/wiki/Texconv) and [Texassemble](https://github.com/Microsoft/DirectXTex/wiki/Texassemble).
+Cross-platform implementation for [Texconv](https://github.com/microsoft/DirectXTex/wiki/Texconv), [Texassemble](https://github.com/Microsoft/DirectXTex/wiki/Texassemble), and [Texdiag](https://github.com/Microsoft/DirectXTex/wiki/Texdiag).
 You can use it as a DLL (or a shared library).  
 
 ## What's Texconv?
@@ -17,6 +17,8 @@ You can add some features by [cmake options](./CMake-Options.md).
 -   Disable GPU codec (`TEXCONV_NO_GPU_CODEC`)
 -   Enable to use [texassemble](https://github.com/microsoft/DirectXTex/wiki/Texassemble) as a DLL function (`TEXCONV_USE_TEXASSEMBLE`)
 -   Enable to build [texassemble](https://github.com/microsoft/DirectXTex/wiki/Texassemble) as an executable (`TEXCONV_USE_TEXASSEMBLE` and `TEXCONV_BUILD_AS_EXE`)
+-   Enable to use [texdiag](https://github.com/microsoft/DirectXTex/wiki/Texdiag) as a DLL function (`TEXCONV_USE_TEXDIAG`)
+-   Enable to build [texdiag](https://github.com/microsoft/DirectXTex/wiki/Texdiag) as an executable (`TEXCONV_USE_TEXDIAG` and `TEXCONV_BUILD_AS_EXE`)
 
 ## Platform
 
@@ -29,7 +31,7 @@ But the custom build supports the following platforms and compilers.
 
 ## Download
 
-You can download built binaries from [the release page](https://github.com/matyalatte/Texconv-Custom-DLL/releases).  
+You can download built binaries from [the release page](https://github.com/failsafe42/Texconv-Custom-DLL/releases).  
 Each zip file has a DLL and executables. The executables don't refer the DLL.
 
 -   `TexconvCustomDLL*-Windows.zip` is for Windows.

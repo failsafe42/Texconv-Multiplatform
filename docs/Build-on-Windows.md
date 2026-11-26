@@ -45,10 +45,11 @@ There are more options for `build.cmd`.
 
 ```console
 Usage: build.cmd [options]
-  --build-as-exe          build texconv and texassemble as executables
+  --build-as-exe          build texconv, texassemble, and texdiag as executables
   --use-optional-formats  support EXR format
   --use-dynamic-link      use system installed OpenEXR
   --no-texassemble        do not build texassemble
+  --no-texdiag            do not build texdiag
   --debug                 enable debug build
   --test                  build and run tests
   --generator <name>      specify a build system e.g. Ninja
@@ -60,7 +61,7 @@ Usage: build.cmd [options]
     build.cmd
       generates texconv.dll in the project root (Texconv-Custom-DLL/)
     build.cmd --build-as-exe
-      generates texconv.exe and texassemble.exe in the project root.
+      generates texconv.exe, texassemble.exe, and texdiag.exe in the project root.
     build.cmd --use-optional-formats
       generates texconv.dll with EXR support
     build.cmd --build-as-exe --generator "MinGW Makefiles"
