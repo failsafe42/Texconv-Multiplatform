@@ -3077,7 +3077,7 @@ namespace
 // int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
 #ifdef _WIN32
 static int texdiag_base(int argc, wchar_t* argv[], bool verbose, bool init_com, wchar_t* err_buf, int err_buf_size);
-extern "C" __declspec(dllexport) int __cdecl texdiag(int argc, wchar_t* argv[], bool verbose = true, bool init_com = false, wchar_t* err_buf = nullptr, int err_buf_size = 0)
+extern "C" __declspec(dllexport) int __cdecl texdiag(int argc, wchar_t* argv[], TexMetadata& info, bool verbose = true, bool init_com = false, wchar_t* err_buf = nullptr, int err_buf_size = 0)
 {
     HRESULT hr = S_OK;
 
@@ -3099,7 +3099,7 @@ extern "C" __declspec(dllexport) int __cdecl texdiag(int argc, wchar_t* argv[], 
 static int texdiag_base(int argc, wchar_t* argv[], bool verbose, bool init_com, wchar_t* err_buf, int err_buf_size)
 {
 #else
-extern "C" __attribute__((visibility("default"))) int texdiag(int argc, wchar_t* argv[], bool verbose = true, bool init_com = false, wchar_t* err_buf = nullptr, int err_buf_size = 0)
+extern "C" __attribute__((visibility("default"))) int texdiag(int argc, wchar_t* argv[], TexMetadata& info, bool verbose = true, bool init_com = false, wchar_t* err_buf = nullptr, int err_buf_size = 0)
 {
     init_com = false;
 #endif
@@ -3722,7 +3722,6 @@ extern "C" __attribute__((visibility("default"))) int texdiag(int argc, wchar_t*
             PrintVerbose(L"%ls", curpath.wstring().c_str());
             fflush(stdout);
 
-            TexMetadata info;
             std::unique_ptr<ScratchImage> image;
             hr = LoadImage(curpath.wstring().c_str(), dwOptions, dwFilter, info, image);
             if (FAILED(hr))
@@ -4165,10 +4164,11 @@ int main(_In_ int argc, _In_z_count_(argc) char* argv_char[])
     }
 
 #endif  // _WIN32
+    TexMetadata info;
     if (argc == 0){
-        return texdiag(0, argv, verbose, init_com);
+        return texdiag(0, argv, info, verbose, init_com);
     } else {
-        return texdiag(argc - 1, &argv[1], verbose, init_com);
+        return texdiag(argc - 1, &argv[1], info, verbose, init_com);
     }
 }
 #endif  // BUILD_AS_EXE
