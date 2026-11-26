@@ -35,6 +35,7 @@ set USE_WIC=ON
 set USE_EXR=OFF
 set USE_STATIC=ON
 set USE_TEXASSEMBLE=ON
+set USE_TEXDIAG=ON
 set TEST=OFF
 
 :parse_args
@@ -60,6 +61,8 @@ if "%~1"=="--debug" (
     set USE_WIC=OFF
 ) else if "%~1"=="--no-texassemble" (
     set USE_TEXASSEMBLE=OFF
+) else if "%~1"=="--no-texdiag" (
+    set USE_TEXDIAG=OFF
 ) else if "%~1"=="--use-exr" (
     set USE_EXR=ON
 ) else if "%~1"=="--use-optional-formats" (
@@ -93,6 +96,7 @@ set CMAKE_OPTIONS=-G "%GENERATOR%"^
  -DTEXCONV_BUILD_TESTS=%TEST%^
  -DTEXCONV_USE_WIC=%USE_WIC%^
  -DTEXCONV_USE_TEXASSEMBLE=%USE_TEXASSEMBLE%^
+ -DTEXCONV_USE_TEXDIAG=%USE_TEXDIAG%^
  -DTEXCONV_USE_STATIC_LINK=%USE_STATIC%^
  -DENABLE_OPENEXR_SUPPORT=%USE_EXR%
 
@@ -112,6 +116,9 @@ if "%BUILD_AS_EXE%"=="ON" (
     if "%USE_TEXASSEMBLE%"=="ON" (
         copy %BIN_DIR%\texassemble.exe ..\
     )
+    if "%USE_TEXDIAG%"=="ON" (
+        copy %BIN_DIR%\texdiag.exe ..\
+    )
 ) else (
     copy %BIN_DIR%\texconv.dll ..\
 )
@@ -121,10 +128,11 @@ exit /b 0
 
 :usage
 echo Usage: build.cmd ^[options^]
-echo   --build-as-exe          build texconv and texassemble as executables
+echo   --build-as-exe          build texconv, texassemble, and texdiag as executables
 echo   --use-optional-formats  support EXR format
 echo   --use-dynamic-link      use system installed OpenEXR
 echo   --no-texassemble        do not build texassemble
+echo   --no-texdiag            do not build texdiag
 echo   --debug                 enable debug build
 echo   --test                  build and run tests
 echo   --generator ^<name^>      specify a build system e.g. Ninja
@@ -136,7 +144,7 @@ echo   Examples:
 echo     build.cmd
 echo       generates texconv.dll in the project root (Texconv-Custom-DLL/)
 echo     build.cmd --build-as-exe
-echo       generates texconv.exe and texassemble.exe in the project root.
+echo       generates texconv.exe, texassemble.exe, and texdiag.exe in the project root.
 echo     build.cmd --use-optional-formats
 echo       generates texconv.dll with EXR support
 echo     build.cmd --build-as-exe --generator "MinGW Makefiles"
