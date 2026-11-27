@@ -14,8 +14,20 @@ jobs:
   build:
     strategy:
       matrix:
-        use_libs: [false, true]
-    runs-on: ubuntu-latest
+        include:
+          - os: ubuntu-latest
+            arch: x64
+            use_libs: false
+          - os: ubuntu-latest
+            arch: x64
+            use_libs: true
+          - os: ubuntu-24.04-arm
+            arch: arm64
+            use_libs: false
+          - os: ubuntu-24.04-arm
+            arch: arm64
+            use_libs: true
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - run: |
@@ -37,7 +49,7 @@ jobs:
           cp LICENSE release/${{ env.ZIP_NAME }}
           cp THIRD_PARTY_LICENSES.txt release/${{ env.ZIP_NAME }}
           cd release
-          tar -Jcvf ${{ env.ZIP_NAME }}-${{ runner.os }}-x64${{ ((matrix.use_libs == false) && '-no-deps') || '' }}.tar.xz ${{ env.ZIP_NAME }}
+          tar -Jcvf ${{ env.ZIP_NAME }}-${{ runner.os }}-${{ matrix.arch }}${{ ((matrix.use_libs == false) && '-no-deps') || '' }}.tar.xz ${{ env.ZIP_NAME }}
 
       - name: Create Release Draft
         id: create-release
@@ -55,4 +67,4 @@ jobs:
       - name: Upload Release Asset
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload ${{ github.ref }} release/${{ env.ZIP_NAME }}-${{ runner.os }}-x64${{ ((matrix.use_libs == false) && '-no-deps') || '' }}.tar.xz
+        run: gh release upload ${{ github.ref }} release/${{ env.ZIP_NAME }}-${{ runner.os }}-${{ matrix.arch }}${{ ((matrix.use_libs == false) && '-no-deps') || '' }}.tar.xz

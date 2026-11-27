@@ -18,7 +18,7 @@
 #    docker build --build-arg JPGPNG=true -t texconv -f Dockerfile_Ubuntu ./
 
 # Base image
-FROM matyalatte/ubuntu20.04-cmake3.25:latest
+FROM ubuntu:22.04
 
 # Add JPEG and PNG support when true
 ARG JPGPNG=false
@@ -30,7 +30,7 @@ ARG TEST=false
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        wget ca-certificates build-essential git && \
+        wget ca-certificates build-essential git cmake && \
     if [ "$JPGPNG" = "true" ] || [ "$TEST" = "true" ]; then \
         apt-get install -y --no-install-recommends libjpeg-dev libpng-dev nasm; \
     fi && \
@@ -46,8 +46,10 @@ RUN git submodule update --init --recursive --recommend-shallow --depth 1
 RUN if [ "$TEST" = "true" ]; then \
         ./build.cmd --test && \
         ./build.cmd --use-optional-formats --build-as-exe; \
+    elif [ "$JPGPNG" = "true" ]; then \
+        ./build.cmd --use-optional-formats && \
+        ./build.cmd --use-optional-formats --build-as-exe; \
     else \
-        OPT=$([ "$JPGPNG" = "true" ] && echo "--use-optional-formats") && \
-        ./build.cmd $OPT && \
-        ./build.cmd $OPT --build-as-exe; \
+        ./build.cmd && \
+        ./build.cmd --build-as-exe; \
     fi
