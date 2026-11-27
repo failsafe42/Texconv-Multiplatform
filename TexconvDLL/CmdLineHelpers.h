@@ -90,7 +90,7 @@ namespace Helpers
         return L"";
     }
 
-    void PrintFormat(DXGI_FORMAT Format, const SValue<DXGI_FORMAT>* pFormatList) noexcept
+    inline void PrintFormat(DXGI_FORMAT Format, const SValue<DXGI_FORMAT>* pFormatList) noexcept
     {
         for (auto pFormat = pFormatList; pFormat->name; pFormat++)
         {
@@ -104,7 +104,7 @@ namespace Helpers
         wprintf(L"*UNKNOWN*");
     }
 
-    void PrintFormat(DXGI_FORMAT Format, const SValue<DXGI_FORMAT>* pFormatList1, const SValue<DXGI_FORMAT>* pFormatList2) noexcept
+    inline void PrintFormat(DXGI_FORMAT Format, const SValue<DXGI_FORMAT>* pFormatList1, const SValue<DXGI_FORMAT>* pFormatList2) noexcept
     {
         for (auto pFormat = pFormatList1; pFormat->name; pFormat++)
         {
@@ -148,7 +148,7 @@ namespace Helpers
         wprintf(L"\n");
     }
 
-    void PrintLogo(bool versionOnly, _In_z_ const wchar_t* name, _In_z_ const wchar_t* desc) noexcept
+    inline void PrintLogo(bool versionOnly, _In_z_ const wchar_t* name, _In_z_ const wchar_t* desc) noexcept
     {
         wchar_t version[32] = {};
 
@@ -194,7 +194,7 @@ namespace Helpers
     }
 
 #if USE_WILDCARD
-    void SearchForFiles(const std::filesystem::path& path, std::list<SConversion>& files, bool recursive, _In_opt_z_ const wchar_t* folder)
+    inline void SearchForFiles(const std::filesystem::path& path, std::list<SConversion>& files, bool recursive, _In_opt_z_ const wchar_t* folder)
     {
         // Process files
         WIN32_FIND_DATAW findData = {};
@@ -257,7 +257,7 @@ namespace Helpers
     }
 #endif
 
-    void ProcessFileList(std::wifstream& inFile, std::list<SConversion>& files)
+    inline void ProcessFileList(std::wifstream& inFile, std::list<SConversion>& files)
     {
         std::list<SConversion> flist;
         std::set<std::wstring> excludes;
@@ -353,7 +353,7 @@ namespace Helpers
         }
     }
 
-    const wchar_t* GetErrorDesc(HRESULT hr) noexcept
+    inline const wchar_t* GetErrorDesc(HRESULT hr) noexcept
     {
     #ifdef _WIN32
         static wchar_t desc[1024] = {};
