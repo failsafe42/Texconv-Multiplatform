@@ -16,16 +16,16 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            arch: x64
+            arch: x86_64
             use_libs: false
           - os: ubuntu-latest
-            arch: x64
+            arch: x86_64
             use_libs: true
           - os: ubuntu-24.04-arm
-            arch: arm64
+            arch: aarch64
             use_libs: false
           - os: ubuntu-24.04-arm
-            arch: arm64
+            arch: aarch64
             use_libs: true
     runs-on: ${{ matrix.os }}
     steps:
