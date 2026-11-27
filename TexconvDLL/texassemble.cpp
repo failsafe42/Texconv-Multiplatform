@@ -6,9 +6,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
-// http://go.microsoft.com/fwlink/?LinkId=248926
+// https://go.microsoft.com/fwlink/?LinkId=248926
 //--------------------------------------------------------------------------------------
 
+#include "tool_util.h"
 #ifdef  _MSC_VER
 #pragma warning(push)
 #pragma warning(disable : 4005)
@@ -90,6 +91,8 @@ namespace
 {
     const wchar_t* g_ToolName = L"texassemble";
     const wchar_t* g_Description = L"Microsoft (R) DirectX Texture Assembler [DirectXTex]";
+    const wchar_t* g_UpstreamFeedbackURL = L"https://github.com/microsoft/DirectXTex/issues";
+    const wchar_t* g_FeedbackURL = L"https://github.com/failsafe42/Texconv-Custom-DLL/issues";
 
     enum COMMANDS : uint32_t
     {
@@ -113,6 +116,9 @@ namespace
         CMD_CUBE_FROM_HS,
         CMD_CUBE_FROM_VS,
         CMD_FROM_MIPS,
+        CMD_CUBE_FROM_MIPS,
+        CMD_HELP,
+        CMD_FEEDBACK,
         CMD_MAX
     };
 
@@ -135,6 +141,7 @@ namespace
         OPT_FILELIST,
         OPT_WIDTH,
         OPT_HEIGHT,
+        OPT_MIPLEVELS,
         OPT_FORMAT,
         OPT_FILTER,
         OPT_SRGBI,
@@ -175,6 +182,9 @@ namespace
         { L"cube-from-hs",      CMD_CUBE_FROM_HS },
         { L"cube-from-vs",      CMD_CUBE_FROM_VS },
         { L"from-mips",         CMD_FROM_MIPS },
+        { L"cube-from-mips",    CMD_CUBE_FROM_MIPS },
+        { L"help",              CMD_HELP },
+        { L"feedback",          CMD_FEEDBACK },
         { nullptr,          0 }
     };
 
@@ -184,6 +194,7 @@ namespace
         { L"flist",     OPT_FILELIST },
         { L"w",         OPT_WIDTH },
         { L"h",         OPT_HEIGHT },
+        { L"m",         OPT_MIPLEVELS },
         { L"f",         OPT_FORMAT },
         { L"if",        OPT_FILTER },
         { L"srgbi",     OPT_SRGBI },
@@ -219,6 +230,7 @@ namespace
         { L"height",                OPT_HEIGHT },
         { L"help",                  OPT_HELP },
         { L"image-filter",          OPT_FILTER },
+        { L"mip-levels",            OPT_MIPLEVELS },
         { L"overwrite",             OPT_OVERWRITE },
         { L"separate-alpha",        OPT_SEPALPHA },
         { L"srgb-in",               OPT_SRGBI },
@@ -476,7 +488,7 @@ HRESULT LoadAnimatedGif(const wchar_t* szFile,
 
 namespace
 {
-    void PrintInfo(const TexMetadata& info)
+    void PrintInfo(const TexMetadata& info) noexcept
     {
         wprintf(L" (%zux%zu", info.width, info.height);
 
@@ -535,13 +547,15 @@ namespace
         wprintf(L")");
     }
 
-    void PrintUsage()
+    void PrintUsage(bool full = false) noexcept
     {
         PrintLogo(false, g_ToolName, g_Description);
 
         static const wchar_t* const s_usage =
-            L"Usage: texassemble <command> <options> [--] <files>\n"
-            L"\nCOMMANDS\n"
+            L"Usage: texassemble <command> <options> [--] <files>\n\n";
+
+        static const wchar_t* const s_fullUsage =
+            L"COMMANDS\n"
             L"   cube                create cubemap\n"
             L"   volume              create volume map\n"
             L"   array               create texture array\n"
@@ -559,6 +573,8 @@ namespace
             L"   cube-from-ht        create cubemap from a h-tee image\n"
             L"   cube-from-hs        create cubemap from a h-strip image\n"
             L"   cube-from-vs        create cubemap from a v-strip image\n"
+            L"   from-mips           create texture with provided mipmap images\n"
+            L"   cube-from-mips      create cubemap with provided mipmap images per face\n"
             L"\nOPTIONS\n"
             L"   -r                  wildcard filename search is recursive\n"
             L"   -flist <filename>, --file-list <filename>\n"
@@ -566,6 +582,7 @@ namespace
             L"\n"
             L"   -w <n>, --width <n>                     width for output\n"
             L"   -h <n>, --height <n>                    height for output\n"
+            L"   -m <n>, --mip-levels <n>                miplevels for output (*-from-mips only)\n"
             L"   -f <format>, --format <format>          pixel format for output\n"
             L"\n"
             L"   -if <filter>, --image-filter <filter>   image filtering\n"
@@ -601,6 +618,11 @@ namespace
 
         wprintf(L"%ls", s_usage);
 
+        if (!full)
+            return;
+
+        wprintf(L"%ls", s_fullUsage);
+
         wprintf(L"\n   <format>: ");
         PrintList(13, g_pFormats);
         wprintf(L"      ");
@@ -613,7 +635,7 @@ namespace
         PrintList(13, g_pFeatureLevels);
     }
 
-    HRESULT SaveImageFile(const Image& img, uint32_t fileType, const wchar_t* szOutputFile)
+    HRESULT SaveImageFile(const Image& img, uint32_t fileType, const wchar_t* szOutputFile) noexcept
     {
         switch (fileType)
         {
@@ -659,7 +681,7 @@ namespace
         _In_reads_(4) const wchar_t* mask,
         _Out_writes_(4) uint32_t* permuteElements,
         _Out_writes_(4) uint32_t* zeroElements,
-        _Out_writes_(4) uint32_t* oneElements)
+        _Out_writes_(4) uint32_t* oneElements) noexcept
     {
         if (!mask || !permuteElements || !zeroElements || !oneElements)
             return false;
@@ -788,7 +810,7 @@ namespace
 #pragma prefast(disable : 28198, "Command-line tool, frees all memory on exit")
 #endif
 
-//int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[]) {
+// int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
 #ifdef _WIN32
 static int texassemble_base(int argc, wchar_t* argv[], bool verbose, bool init_com, wchar_t* err_buf, int err_buf_size);
 extern "C" __declspec(dllexport) int __cdecl texassemble(int argc, wchar_t* argv[], bool verbose = true, bool init_com = false, wchar_t* err_buf = nullptr, int err_buf_size = 0)
@@ -820,6 +842,7 @@ extern "C" __attribute__((visibility("default"))) int texassemble(int argc, wcha
     // Parameters and defaults
     size_t width = 0;
     size_t height = 0;
+    size_t mipLevels = 0;
 
     DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN;
     TEX_FILTER_FLAGS dwFilter = TEX_FILTER_DEFAULT;
@@ -862,7 +885,7 @@ extern "C" __attribute__((visibility("default"))) int texassemble(int argc, wcha
         }
         else if (!_wcsicmp(argv[0], L"--help"))
         {
-            PrintUsage();
+            PrintUsage(true);
             return 0;
         }
     }
@@ -890,7 +913,19 @@ extern "C" __attribute__((visibility("default"))) int texassemble(int argc, wcha
     case CMD_CUBE_FROM_HS:
     case CMD_CUBE_FROM_VS:
     case CMD_FROM_MIPS:
+    case CMD_CUBE_FROM_MIPS:
         break;
+
+    case CMD_HELP:
+        PrintUsage(true);
+        return 0;
+
+    case CMD_FEEDBACK:
+        wprintf(L"If you have an issue, please test with Microsoft's official texassemble.\n"
+                L"If the issue occurs there as well, open an issue on %ls.\n"
+                L"Otherwise open an issue on %ls.\n",
+                g_UpstreamFeedbackURL, g_FeedbackURL);
+        return 0;
 
     default:
         RaiseError(L"Must use one of: ");
@@ -961,6 +996,7 @@ extern "C" __attribute__((visibility("default"))) int texassemble(int argc, wcha
             case OPT_FILELIST:
             case OPT_WIDTH:
             case OPT_HEIGHT:
+            case OPT_MIPLEVELS:
             case OPT_FORMAT:
             case OPT_FILTER:
             case OPT_SRGBI:
@@ -997,6 +1033,7 @@ extern "C" __attribute__((visibility("default"))) int texassemble(int argc, wcha
             case OPT_FILELIST:
             case OPT_WIDTH:
             case OPT_HEIGHT:
+            case OPT_MIPLEVELS:
             case OPT_FORMAT:
             case OPT_FILTER:
             case OPT_OUTPUTFILE:
@@ -1033,6 +1070,19 @@ extern "C" __attribute__((visibility("default"))) int texassemble(int argc, wcha
                 if (swscanf_s(pValue, L"%zu", &height) != 1)
                 {
                     RaiseError(L"Invalid value specified with -h (%ls)\n", pValue);
+                    return 1;
+                }
+                break;
+
+            case OPT_MIPLEVELS:
+                if (dwCommand != CMD_FROM_MIPS && dwCommand != CMD_CUBE_FROM_MIPS)
+                {
+                    RaiseError(L"-m option only applies to *-from-mips command\n");
+                    return 1;
+                }
+                else if (swscanf_s(pValue, L"%zu", &mipLevels) != 1)
+                {
+                    RaiseError(L"Invalid value specified with -m (%ls)\n", pValue);
                     return 1;
                 }
                 break;
@@ -1096,7 +1146,6 @@ extern "C" __attribute__((visibility("default"))) int texassemble(int argc, wcha
                     case CMD_V_STRIP:
                     case CMD_MERGE:
                     case CMD_ARRAY_STRIP:
-                    case CMD_FROM_MIPS:
                         break;
 
                     default:
@@ -1217,7 +1266,7 @@ extern "C" __attribute__((visibility("default"))) int texassemble(int argc, wcha
                 return 1;
             }
         #else
-            wprintf(L"Wildcard is not supported. (%ls)", pArg);
+            RaiseError(L"Wildcard is not supported. (%ls)", pArg);
             return 1;
         #endif
         }
@@ -1269,6 +1318,57 @@ extern "C" __attribute__((visibility("default"))) int texassemble(int argc, wcha
         {
             RaiseError(L"ERROR: merge output only accepts 2 input files\n");
             return 1;
+        }
+        break;
+
+    case CMD_FROM_MIPS:
+        if (conversion.size() < 2)
+        {
+            RaiseError(L"ERROR: from-mips command requires at least 2 input files\n");
+            return 1;
+        }
+        else if (width != 0 && height != 0)
+        {
+            if (!CalculateMipLevels(width, height, mipLevels))
+            {
+                RaiseError(L"ERROR: mipLevels value invalid for given dimensions (%zu x %zu)\n", width, height);
+                return 1;
+            }
+
+            if (conversion.size() != mipLevels)
+            {
+                RaiseError(L"ERROR: number of input files (%zu) doesn't match the specified mip levels for given dimensions (%zu x %zu, %zu mip levels)\n",
+                    conversion.size(), width, height, mipLevels);
+                return 1;
+            }
+        }
+        break;
+
+    case CMD_CUBE_FROM_MIPS:
+        if (conversion.size() < 12)
+        {
+            RaiseError(L"ERROR: cube-from-mips command requires at least 12 input files\n");
+            return 1;
+        }
+        else if (conversion.size() % 6 != 0)
+        {
+            RaiseError(L"ERROR: cube-from-mips command requires a multiple of 6 input files (one set for each face of the cubemap)\n");
+            return 1;
+        }
+        else if (width != 0 && height != 0)
+        {
+            if (!CalculateMipLevels(width, height, mipLevels))
+            {
+                RaiseError(L"ERROR: mipLevels value invalid for given dimensions (%zu x %zu)\n", width, height);
+                return 1;
+            }
+
+            if (conversion.size() != (mipLevels * 6))
+            {
+                RaiseError(L"ERROR: number of input files (%zu) doesn't match the specified mip levels for given dimensions (%zu x %zu, %zu mip levels)\n",
+                    conversion.size(), width, height, mipLevels);
+                return 1;
+            }
         }
         break;
 
@@ -1670,7 +1770,7 @@ extern "C" __attribute__((visibility("default"))) int texassemble(int argc, wcha
                 {
                     printf("\nWARNING: Image is already using straight alpha\n");
                 }
-                else if (!info.IsPMAlpha() && info.GetAlphaMode() != TEX_ALPHA_MODE_UNKNOWN)
+                else if (!info.IsPMAlpha())
                 {
                     printf("\nWARNING: Image is not using premultipled alpha\n");
                 }
@@ -1718,24 +1818,81 @@ extern "C" __attribute__((visibility("default"))) int texassemble(int argc, wcha
             {
                 height = info.height;
             }
+
             size_t targetWidth = width;
             size_t targetHeight = height;
-            if (dwCommand == CMD_FROM_MIPS)
+            switch(dwCommand)
             {
-                size_t mipdiv = 1;
-                for (size_t i = 0; i < conversionIndex; ++i)
+            case  CMD_FROM_MIPS:
                 {
-                    mipdiv = mipdiv + mipdiv;
-                }
+                    if (!conversionIndex)
+                    {
+                        if (mipLevels == 0)
+                        {
+                            mipLevels = conversion.size();
+                        }
 
-                targetWidth /= mipdiv;
-                targetHeight /= mipdiv;
-                if (targetWidth == 0 || targetHeight == 0)
-                {
-                    RaiseError(L"\nERROR: Too many input mips provided. For the dimensions of the first mip provided, only %zu input mips can be used.\n", conversionIndex);
-                    return 1;
+                        if (!CalculateMipLevels(width, height, mipLevels))
+                        {
+                            RaiseError(L"\nERROR: Too many input mips provided for the given dimensions of %zu x %zu.\n", width, height);
+                            return 1;
+                        }
+                    }
+
+                    size_t mipdiv = 1;
+                    for (size_t i = 0; i < conversionIndex; ++i)
+                    {
+                        mipdiv = mipdiv + mipdiv;
+                    }
+
+                    targetWidth /= mipdiv;
+                    targetHeight /= mipdiv;
+                    if (targetWidth == 0 || targetHeight == 0)
+                    {
+                        RaiseError(L"\nERROR: Too many input mips provided. For the dimensions of the first mip provided, only %zu input mips can be used.\n", conversionIndex);
+                        return 1;
+                    }
                 }
+                break;
+
+            case CMD_CUBE_FROM_MIPS:
+                {
+                    if (!conversionIndex)
+                    {
+                        if (mipLevels == 0)
+                        {
+                            mipLevels = conversion.size() / 6;
+                        }
+
+                        if (!CalculateMipLevels(width, height, mipLevels))
+                        {
+                            RaiseError(L"\nERROR: Too many input mips provided for the given dimensions of %zu x %zu.\n", width, height);
+                            return 1;
+                        }
+                    }
+
+                    size_t t = conversionIndex % mipLevels;
+
+                    size_t mipdiv = 1;
+                    for (size_t i = 0; i < t; ++i)
+                    {
+                        mipdiv = mipdiv + mipdiv;
+                    }
+
+                    targetWidth /= mipdiv;
+                    targetHeight /= mipdiv;
+                    if (targetWidth == 0 || targetHeight == 0)
+                    {
+                        RaiseError(L"\nERROR: Too many input mips provided. For the dimensions of the first mip provided, only %zu input mips can be used.\n", conversionIndex);
+                        return 1;
+                    }
+                }
+                break;
+
+            default:
+                break;
             }
+
             if (info.width != targetWidth || info.height != targetHeight)
             {
                 std::unique_ptr<ScratchImage> timage(new (std::nothrow) ScratchImage);
@@ -1887,7 +2044,7 @@ extern "C" __attribute__((visibility("default"))) int texassemble(int argc, wcha
 
             images += info.arraySize;
             loadedImages.emplace_back(std::move(image));
-            ++conversionIndex;
+            conversionIndex++;
         }
     }
 
@@ -2480,33 +2637,62 @@ extern "C" __attribute__((visibility("default"))) int texassemble(int argc, wcha
             break;
         }
     case CMD_FROM_MIPS:
+    case CMD_CUBE_FROM_MIPS:
         {
-            auto src = loadedImages.cbegin();
             ScratchImage result;
-            hr = result.Initialize2D(format, width, height, 1, images);
+            switch(dwCommand)
+            {
+            case CMD_FROM_MIPS:
+                hr = result.Initialize2D(format, width, height, 1, mipLevels);
+                break;
+
+            case CMD_CUBE_FROM_MIPS:
+                hr = result.InitializeCube(format, width, height, 1, mipLevels);
+                break;
+
+            default:
+                break;
+            }
             if (FAILED(hr))
             {
                 RaiseError(L"FAILED setting up result image (%08X%ls)\n", static_cast<unsigned int>(hr), GetErrorDesc(hr));
                 return 1;
             }
-            size_t mipdiv = 1;
+
+            size_t mipIndex = 0;
             size_t index = 0;
+            size_t arrayIndex = 0;
+            auto src = loadedImages.cbegin();
             for (auto it = src; it != loadedImages.cend(); ++it)
             {
-                auto dest = result.GetImage(index, 0, 0);
                 const ScratchImage* simage = it->get();
                 assert(simage != nullptr);
                 const Image* img = simage->GetImage(0, 0, 0);
                 assert(img != nullptr);
-                hr = CopyRectangle(*img, Rect(0, 0, width / mipdiv, height / mipdiv), *dest, dwFilter | dwFilterOpts, 0, 0);
+
+                auto dest = result.GetImage(mipIndex, arrayIndex, 0);
+                if (!dest)
+                {
+                    RaiseError(L"FAILED building result image\n");
+                    return 1;
+                }
+
+                hr = CopyRectangle(*img, Rect(0, 0, dest->width, dest->height), *dest, dwFilter | dwFilterOpts, 0, 0);
                 if (FAILED(hr))
                 {
                     RaiseError(L"FAILED building result image (%08X%ls)\n", static_cast<unsigned int>(hr), GetErrorDesc(hr));
                     return 1;
                 }
                 index++;
-                mipdiv *= 2;
+                mipIndex++;
+
+                if ((dwCommand == CMD_CUBE_FROM_MIPS) && (index % mipLevels) == 0)
+                {
+                    arrayIndex++;
+                    mipIndex = 0;
+                }
             }
+
             // Write texture2D
             PrintVerbose(L"\nWriting %ls ", outputFile.c_str());
             PrintInfoVerbose(result.GetMetadata());

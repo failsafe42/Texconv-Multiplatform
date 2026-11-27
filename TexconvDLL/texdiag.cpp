@@ -6,7 +6,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
-// http://go.microsoft.com/fwlink/?LinkId=248926
+// https://go.microsoft.com/fwlink/?LinkId=248926
 //--------------------------------------------------------------------------------------
 
 #ifdef  _MSC_VER
@@ -85,6 +85,8 @@ namespace
 {
     const wchar_t* g_ToolName = L"texdiag";
     const wchar_t* g_Description = L"Microsoft (R) DirectX Texture Diagnostic Tool [DirectXTex]";
+    const wchar_t* g_UpstreamFeedbackURL = L"https://github.com/microsoft/DirectXTex/issues";
+    const wchar_t* g_FeedbackURL = L"https://github.com/failsafe42/Texconv-Custom-DLL/issues";
 
     enum COMMANDS : uint32_t
     {
@@ -94,6 +96,8 @@ namespace
         CMD_DIFF,
         CMD_DUMPBC,
         CMD_DUMPDDS,
+        CMD_HELP,
+        CMD_FEEDBACK,
         CMD_MAX
     };
 
@@ -138,6 +142,8 @@ namespace
         { L"diff",      CMD_DIFF },
         { L"dumpbc",    CMD_DUMPBC },
         { L"dumpdds",   CMD_DUMPDDS },
+        { L"help",      CMD_HELP },
+        { L"feedback",  CMD_FEEDBACK },
         { nullptr,      0 }
     };
 
@@ -468,13 +474,15 @@ namespace
         { nullptr,  CODEC_DDS      }
     };
 
-    void PrintUsage()
+    void PrintUsage(bool full = false) noexcept
     {
         PrintLogo(false, g_ToolName, g_Description);
 
         static const wchar_t* const s_usage =
-            L"Usage: texdiag <command> <options> [--] <files>\n"
-            L"\nCOMMANDS\n"
+            L"Usage: texdiag <command> <options> [--] <files>\n\n";
+
+        static const wchar_t* const s_fullUsage =
+            L"COMMANDS\n"
             L"   info                Output image metadata\n"
             L"   analyze             Analyze and summarize image information\n"
             L"   compare             Compare two images with MSE error metric\n"
@@ -522,6 +530,11 @@ namespace
 
         wprintf(L"%ls", s_usage);
 
+        if (!full)
+            return;
+
+        wprintf(L"%ls", s_fullUsage);
+
         wprintf(L"\n   <format>: ");
         PrintList(13, g_pFormats);
         wprintf(L"      ");
@@ -539,7 +552,7 @@ namespace
         uint32_t dwOptions,
         TEX_FILTER_FLAGS dwFilter,
         TexMetadata& info,
-        std::unique_ptr<ScratchImage>& image)
+        std::unique_ptr<ScratchImage>& image) noexcept
     {
         if (!fileName)
             return E_INVALIDARG;
@@ -696,7 +709,7 @@ namespace
         size_t   specials_z;
         size_t   specials_w;
 
-        void Print()
+        void Print() noexcept
         {
             wprintf(L"\t  Minimum - (%f %f %f %f)\n", imageMin.x, imageMin.y, imageMin.z, imageMin.w);
             wprintf(L"\t  Average - (%f %f %f %f)\n", imageAvg.x, imageAvg.y, imageAvg.z, imageAvg.w);
@@ -1409,7 +1422,7 @@ namespace
     inline static bool IsFixUpOffset(
         _In_range_(0, 2) size_t uPartitions,
         _In_range_(0, 63) uint64_t uShape,
-        _In_range_(0, 15) size_t uOffset)
+        _In_range_(0, 15) size_t uOffset) noexcept
     {
         for (size_t p = 0; p <= uPartitions; p++)
         {
@@ -1426,7 +1439,7 @@ namespace
 
     constexpr size_t NUM_PIXELS_PER_BLOCK = 16;
 
-    void Print565(uint16_t rgb)
+    void Print565(uint16_t rgb) noexcept
     {
         const auto r = float(((rgb >> 11) & 31) * (1.0f / 31.0f));
         const auto g = float(((rgb >> 5) & 63) * (1.0f / 63.0f));
@@ -1435,7 +1448,7 @@ namespace
         wprintf(L"(R: %.3f, G: %.3f, B: %.3f)", r, g, b);
     }
 
-    void PrintIndex2bpp(uint32_t bitmap)
+    void PrintIndex2bpp(uint32_t bitmap) noexcept
     {
         for (size_t j = 0; j < NUM_PIXELS_PER_BLOCK; ++j, bitmap >>= 2)
         {
@@ -1443,7 +1456,7 @@ namespace
         }
     }
 
-    void PrintIndex2bpp(uint64_t bitmap, size_t parts, uint64_t shape)
+    void PrintIndex2bpp(uint64_t bitmap, size_t parts, uint64_t shape) noexcept
     {
         for (size_t j = 0; j < NUM_PIXELS_PER_BLOCK; ++j)
         {
@@ -1460,7 +1473,7 @@ namespace
         }
     }
 
-    void PrintIndex3bpp(uint64_t bitmap, size_t parts, uint64_t shape)
+    void PrintIndex3bpp(uint64_t bitmap, size_t parts, uint64_t shape) noexcept
     {
         for (size_t j = 0; j < NUM_PIXELS_PER_BLOCK; ++j)
         {
@@ -1477,7 +1490,7 @@ namespace
         }
     }
 
-    void PrintIndex4bpp(uint64_t bitmap, size_t parts, uint64_t shape)
+    void PrintIndex4bpp(uint64_t bitmap, size_t parts, uint64_t shape) noexcept
     {
         for (size_t j = 0; j < NUM_PIXELS_PER_BLOCK; ++j)
         {
@@ -1494,7 +1507,7 @@ namespace
         }
     }
 
-    void PrintIndex3bpp(const uint8_t data[6])
+    void PrintIndex3bpp(const uint8_t data[6]) noexcept
     {
         uint32_t bitmap = uint32_t(data[0]) | (uint32_t(data[1]) << 8) | (uint32_t(data[2]) << 16);
 
@@ -1512,7 +1525,7 @@ namespace
         }
     }
 
-    const wchar_t* GetRotBits(uint64_t rot)
+    const wchar_t* GetRotBits(uint64_t rot) noexcept
     {
         switch (rot)
         {
