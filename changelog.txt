@@ -1,3 +1,13 @@
+v0.6.1
+- Added texdiag
+- Added arm64 linux build
+- Fixed linux compilation
+- Updated DirectXTex to may2026
+- Updated DirectXMath to jun2026
+- Updated DirectX-Headers to v1.620.2
+- Updated safestringlib to v1.3.0
+- Updated TexconvDLL based on DirectXTex may2026
+
 v0.6.0
 - Updated DirectXTex to Oct2025 release. (#25)
   (includes PNG and JPEG fixes for Linux/macOS.)

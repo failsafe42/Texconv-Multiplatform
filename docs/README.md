@@ -1,4 +1,4 @@
-# Texconv-Multiplatform v0.6.0
+# Texconv-Multiplatform v0.6.1
 
 Cross-platform implementation for [Texconv](https://github.com/microsoft/DirectXTex/wiki/Texconv), [Texassemble](https://github.com/Microsoft/DirectXTex/wiki/Texassemble), and [Texdiag](https://github.com/Microsoft/DirectXTex/wiki/Texdiag).
 You can use it as a DLL (or a shared library).  
