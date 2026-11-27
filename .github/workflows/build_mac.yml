@@ -9,13 +9,25 @@ permissions:
 
 env:
   ZIP_NAME: TexconvCustomDLL
-
 jobs:
   build:
+    runs-on: macos-latest
     strategy:
       matrix:
-        use_libs: [false, true]
-    runs-on: macos-latest
+        include:
+          - arch: arm64
+            flag: ""
+            use_libs: false
+          - arch: universal
+            flag: "--universal"
+            use_libs: false
+          - arch: arm64
+            flag: ""
+            use_libs: true
+          - arch: universal
+            flag: "--universal"
+            use_libs: true
+        arch: [arm64, universal]
     steps:
       - uses: actions/checkout@v4
       - run: |
@@ -24,20 +36,20 @@ jobs:
       - name: build texconv
         if: matrix.use_libs == false
         run: |
-          ./build.cmd --universal
-          ./build.cmd --universal --build-as-exe
+          ./build.cmd ${{ matrix.flag }}
+          ./build.cmd --build-as-exe ${{ matrix.flag }}
 
       - name: build texconv with libjpeg and libpng
         if: matrix.use_libs == true
         run: |
           brew install nasm
-          ./build.cmd --universal --use-optional-formats
-          ./build.cmd --universal --use-optional-formats --build-as-exe
+          ./build.cmd --use-optional-formats ${{ matrix.flag }}
+          ./build.cmd --use-optional-formats --build-as-exe  ${{ matrix.flag }}
 
       - name: Copy files
         run: |
           mkdir -p release/${{ env.ZIP_NAME }}
-          cp libtexconv.dylib release/${{ env.ZIP_NAME }}
+          cp libtexconv.* release/${{ env.ZIP_NAME }}
           cp texconv release/${{ env.ZIP_NAME }}
           cp texassemble release/${{ env.ZIP_NAME }}
           cp texdiag release/${{ env.ZIP_NAME }}
@@ -45,7 +57,7 @@ jobs:
           cp LICENSE release/${{ env.ZIP_NAME }}
           cp THIRD_PARTY_LICENSES.txt release/${{ env.ZIP_NAME }}
           cd release
-          tar -Jcvf ${{ env.ZIP_NAME }}-${{ runner.os }}-universal${{ ((matrix.use_libs == false) && '-no-deps') || '' }}.tar.xz ${{ env.ZIP_NAME }}
+          tar -Jcvf ${{ env.ZIP_NAME }}-${{ runner.os }}-${{ matrix.arch }}${{ ((matrix.use_libs == false) && '-no-deps') || '' }}.tar.xz ${{ env.ZIP_NAME }}
 
       - name: Create Release Draft
         id: create-release
@@ -63,4 +75,4 @@ jobs:
       - name: Upload Release Asset
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload ${{ github.ref }} release/${{ env.ZIP_NAME }}-${{ runner.os }}-universal${{ ((matrix.use_libs == false) && '-no-deps') || '' }}.tar.xz
+        run: gh release upload ${{ github.ref }} release/${{ env.ZIP_NAME }}-${{ runner.os }}-${{ matrix.arch }}${{ ((matrix.use_libs == false) && '-no-deps') || '' }}.tar.xz
