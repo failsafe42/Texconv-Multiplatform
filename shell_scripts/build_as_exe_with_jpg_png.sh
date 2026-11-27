@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Builds texconv and texassemble with static linked 3rd party libraries.
-# It generates texconv and texassemble in the project root (Texconv-Custom-DLL/)
+# It generates texconv and texassemble in the project root (Texconv-Multiplatform/)
 
 ESC=$(printf '\033')
 echo "${ESC}[33mDeprecation Warning:"

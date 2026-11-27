@@ -1,4 +1,4 @@
-# Texconv-Custom-DLL v0.6.0
+# Texconv-Multiplatform v0.6.0
 
 Cross-platform implementation for [Texconv](https://github.com/microsoft/DirectXTex/wiki/Texconv), [Texassemble](https://github.com/Microsoft/DirectXTex/wiki/Texassemble), and [Texdiag](https://github.com/Microsoft/DirectXTex/wiki/Texdiag).
 You can use it as a DLL (or a shared library).  
@@ -31,12 +31,12 @@ But the custom build supports the following platforms and compilers.
 
 ## Download
 
-You can download built binaries from [the release page](https://github.com/failsafe42/Texconv-Custom-DLL/releases).  
+You can download built binaries from [the release page](https://github.com/failsafe42/Texconv-Multiplatform/releases).  
 Each zip file has a DLL and executables. The executables don't refer the DLL.
 
--   `TexconvCustomDLL*-Windows.zip` is for Windows.
--   `TexconvCustomDLL*-macOS.tar.xz` is for macOS (10.15 or later).
--   `TexconvCustomDLL*-Linux.tar.xz` is for Linux with GLIBC 2.29+ and GLIBCXX 3.4.26+.
+-   `TexconvMultiplatform*-Windows.zip` is for Windows.
+-   `TexconvMultiplatform*-macOS.tar.xz` is for macOS (10.15 or later).
+-   `TexconvMultiplatform*-Linux.tar.xz` is for Linux with GLIBC 2.29+ and GLIBCXX 3.4.26+.
 
 > [!Note]
 > The linux build only supports distributions using GLIBC.  

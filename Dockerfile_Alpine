@@ -7,11 +7,11 @@
 #    docker run texconv
 #
 # 3. Use "docker cp" to get the built executables.
-#    docker cp <CONTAINER ID>:/Texconv-Custom-DLL/texconv ./
-#    docker cp <CONTAINER ID>:/Texconv-Custom-DLL/texassemble ./
+#    docker cp <CONTAINER ID>:/Texconv-Multiplatform/texconv ./
+#    docker cp <CONTAINER ID>:/Texconv-Multiplatform/texassemble ./
 #
 # 4. Also, you can get the built shared library.
-#    docker cp <CONTAINER ID>:/Texconv-Custom-DLL/libtexconv.so ./
+#    docker cp <CONTAINER ID>:/Texconv-Multiplatform/libtexconv.so ./
 #
 # Notes:
 #   -You can add JPEG and PNG support with build-arg
@@ -34,8 +34,8 @@ RUN apk update && \
     fi
 
 # Clone repo
-COPY . /Texconv-Custom-DLL
-WORKDIR /Texconv-Custom-DLL
+COPY . /Texconv-Multiplatform
+WORKDIR /Texconv-Multiplatform
 RUN git submodule update --init --recursive --recommend-shallow --depth 1
 
 # Build

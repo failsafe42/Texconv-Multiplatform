@@ -44,5 +44,5 @@ jobs:
       - name: check glibc compatibility
         run: |
           docker run --name texconv texconv
-          docker cp texconv:/Texconv-Custom-DLL/libtexconv.so .
+          docker cp texconv:/Texconv-Multiplatform/libtexconv.so .
           ./scripts/check_glibc_compatibility.sh ./libtexconv.so

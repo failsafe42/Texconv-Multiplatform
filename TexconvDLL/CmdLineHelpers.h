@@ -23,7 +23,7 @@
 #include <set>
 #include <string>
 
-// Header for Texconv-Custom-DLL
+// Header for Texconv-Multiplatform
 #include "tool_util.h"
 
 #ifndef TOOL_VERSION

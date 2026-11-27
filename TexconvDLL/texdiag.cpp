@@ -86,7 +86,7 @@ namespace
     const wchar_t* g_ToolName = L"texdiag";
     const wchar_t* g_Description = L"Microsoft (R) DirectX Texture Diagnostic Tool [DirectXTex]";
     const wchar_t* g_UpstreamFeedbackURL = L"https://github.com/microsoft/DirectXTex/issues";
-    const wchar_t* g_FeedbackURL = L"https://github.com/failsafe42/Texconv-Custom-DLL/issues";
+    const wchar_t* g_FeedbackURL = L"https://github.com/failsafe42/Texconv-Multiplatform/issues";
 
     enum COMMANDS : uint32_t
     {

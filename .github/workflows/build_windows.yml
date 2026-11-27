@@ -8,7 +8,7 @@ permissions:
   contents: write
 
 env:
-  ZIP_NAME: TexconvCustomDLL
+  ZIP_NAME: TexconvMultiplatform
 
 jobs:
   build:

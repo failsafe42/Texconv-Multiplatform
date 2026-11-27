@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Builds libtexconv.so with static linked 3rd party libraries.
-# It generates libtexconv.so or libtexconv.dylib in the project root (Texconv-Custom-DLL/)
+# It generates libtexconv.so or libtexconv.dylib in the project root (Texconv-Multiplatform/)
 
 ESC=$(printf '\033')
 echo "${ESC}[33mDeprecation Warning:"

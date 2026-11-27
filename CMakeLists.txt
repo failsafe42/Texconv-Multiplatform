@@ -3,7 +3,7 @@
 
 cmake_minimum_required (VERSION 3.20)
 
-project (Texconv-Custom-DLL
+project (Texconv-Multiplatform
   LANGUAGES C CXX)
 
 set(BUILD_TOOLS OFF)

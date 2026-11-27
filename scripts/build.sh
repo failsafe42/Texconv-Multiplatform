@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Builds texconv with cmake
-# and copy it to the project root (Texconv-Custom-DLL/)
+# and copy it to the project root (Texconv-Multiplatform/)
 
 function usage() {
 cat <<EOF
@@ -17,7 +17,7 @@ Usage: build.cmd [options]
 
   Examples:
     build.cmd
-      -> generates libtexconv in the project root (Texconv-Custom-DLL/)
+      -> generates libtexconv in the project root (Texconv-Multiplatform/)
     build.cmd --build-as-exe
       -> generates texconv, texassemble, and texdiag in the project root.
     build.cmd --use-optional-formats

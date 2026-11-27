@@ -16,7 +16,7 @@ However, please note that there are some limitations.
 
 ## 1. Get submodules
 
-Move to `./Texconv-Custom-DLL` and get submodules.
+Move to `./Texconv-Multiplatform` and get submodules.
 
 ```
 git submodule update --init --recursive
@@ -30,7 +30,7 @@ You can build `libtexconv.so` (or `libtexconv.dylib`) with `./build.cmd`.
 ./build.cmd --use-optional-formats
 ```
 
-It generates `libtexconv.so` (or `libtexconv.dylib`) in `./Texconv-Custom-DLL/`.  
+It generates `libtexconv.so` (or `libtexconv.dylib`) in `./Texconv-Multiplatform/`.  
 
 ## 3. Build executables (optional)
 
@@ -40,7 +40,7 @@ If you want executables, add `--build-as-exe` to options.
 ./build.cmd --use-optional-formats --build-as-exe
 ```
 
-It generates `texconv` and `texassemble` in `./Texconv-Custom-DLL/`.  
+It generates `texconv` and `texassemble` in `./Texconv-Multiplatform/`.  
 You can use the built binaries on the terminal. (e.g. `./texconv -ft tga -y -o outdir -- test.dds`)  
 
 ## 4. More options
@@ -62,7 +62,7 @@ Usage: build.cmd [options]
 
   Examples:
     build.cmd
-      -> generates libtexconv in the project root (Texconv-Custom-DLL/)
+      -> generates libtexconv in the project root (Texconv-Multiplatform/)
     build.cmd --build-as-exe
       -> generates texconv, texassemble, and texdiag in the project root.
     build.cmd --use-optional-formats

@@ -12,7 +12,7 @@
 
 ## 1. Get submodules
 
-Move to `.\Texconv-Custom-DLL` and get submodules.
+Move to `.\Texconv-Multiplatform` and get submodules.
 
 ```
 git submodule update --init --recursive
@@ -26,7 +26,7 @@ You can build `texconv.dll` with `.\build.cmd`.
 .\build.cmd --use-optional-formats
 ```
 
-It generates `texconv.dll` in `Texconv-Custom-DLL\`.  
+It generates `texconv.dll` in `Texconv-Multiplatform\`.  
 
 ## 3. Build executables (optional)
 
@@ -36,7 +36,7 @@ If you want executables, add `--build-as-exe` to options.
 .\build.cmd --use-optional-formats --build-as-exe
 ```
 
-It generates `texconv.exe` and `texassemble.exe` in `.\Texconv-Custom-DLL\`.  
+It generates `texconv.exe` and `texassemble.exe` in `.\Texconv-Multiplatform\`.  
 You can use the built binaries on the command prompt. (e.g. `.\texconv.exe -ft tga -y -o outdir -- test.dds`)  
 
 ## 4. More options
@@ -59,7 +59,7 @@ Usage: build.cmd [options]
 
   Examples:
     build.cmd
-      generates texconv.dll in the project root (Texconv-Custom-DLL/)
+      generates texconv.dll in the project root (Texconv-Multiplatform/)
     build.cmd --build-as-exe
       generates texconv.exe, texassemble.exe, and texdiag.exe in the project root.
     build.cmd --use-optional-formats

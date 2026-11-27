@@ -107,7 +107,7 @@ namespace
     const wchar_t* g_Description = L"Microsoft (R) DirectX Texture Converter [DirectXTex]";
 #endif
     const wchar_t* g_UpstreamFeedbackURL = L"https://github.com/microsoft/DirectXTex/issues";
-    const wchar_t* g_FeedbackURL = L"https://github.com/failsafe42/Texconv-Custom-DLL/issues";
+    const wchar_t* g_FeedbackURL = L"https://github.com/failsafe42/Texconv-Multiplatform/issues";
 
     enum OPTIONS : uint64_t
     {

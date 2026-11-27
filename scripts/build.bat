@@ -2,7 +2,7 @@
 setlocal ENABLEDELAYEDEXPANSION
 
 REM Builds texconv with cmake
-REM and copies it to the project root (Texconv-Custom-DLL/)
+REM and copies it to the project root (Texconv-Multiplatform/)
 REM The built binaries do NOT require vcruntime140.dll
 
 REM get default generator
@@ -142,7 +142,7 @@ echo   --use-exr               same as --use-optional-formats
 echo.
 echo   Examples:
 echo     build.cmd
-echo       generates texconv.dll in the project root (Texconv-Custom-DLL/)
+echo       generates texconv.dll in the project root (Texconv-Multiplatform/)
 echo     build.cmd --build-as-exe
 echo       generates texconv.exe, texassemble.exe, and texdiag.exe in the project root.
 echo     build.cmd --use-optional-formats

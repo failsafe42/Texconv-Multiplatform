@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Builds universal binary with cmake.
-# libtexconv.dylib will be generated in ./Texconv-Custom-DLL/
+# libtexconv.dylib will be generated in ./Texconv-Multiplatform/
 
 ESC=$(printf '\033')
 echo "${ESC}[33mDeprecation Warning:"
